@@ -7,7 +7,7 @@
   <plugin>
 		<groupId>com.alibaba.maven.plugins</groupId>
 	    <artifactId>maven-jcc-plugin</artifactId>
-	    <version>1.0-SNAPSHOT</version>
+	    <version>0.1</version>
 	    <executions>
 	    <execution>
 	         <id>check</id>	       
