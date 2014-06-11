@@ -8,31 +8,33 @@ public class ConflictResult {
 	
 	private String desc;
 	
-	private List<Jar> conflictJars; 
+	private List<Jar> conflictProjectJars;  //工程中的jar
+	
+	private Jar conflictParamJar; //需要被检测的jar 
 	
 	private List<String> conflictClasses;
 	
 	
 	public ConflictResult(){
-		conflictJars = new ArrayList<Jar>();	
+		conflictProjectJars = new ArrayList<Jar>();	
 		conflictClasses = new ArrayList<String>();
 	}
 	
-	public void addConflictJar(Jar jar){
-		if(conflictJars.contains(jar)){
+	public void addConflictProjectJar(Jar jar){
+		if(conflictProjectJars.contains(jar)){
 			return;
 		}
-		conflictJars.add(jar);
+		conflictProjectJars.add(jar);
 	}
 	
 	
-	public void addConflictJars(List<Jar> jars){
+	public void addConflictProjectJars(List<Jar> jars){
 		if(jars == null || jars.size() == 0){
 			return;
 		}
 		
 		for(Jar jar : jars){
-			addConflictJar(jar);
+			addConflictProjectJar(jar);
 		}
 	}
 	
@@ -46,16 +48,23 @@ public class ConflictResult {
 
 	public void setDesc(String desc) {
 		this.desc = desc;
-	}	
-
+	}	   
 	
 
-	public List<Jar> getConflictJars() {
-		return conflictJars;
+	public List<Jar> getConflictProjectJars() {
+		return conflictProjectJars;
 	}
 
-	public void setConflictJars(List<Jar> conflictJars) {
-		this.conflictJars = conflictJars;
+	public void setConflictProjectJars(List<Jar> conflictProjectJars) {
+		this.conflictProjectJars = conflictProjectJars;
+	}
+
+	public Jar getConflictParamJar() {
+		return conflictParamJar;
+	}
+
+	public void setConflictParamJar(Jar conflictParamJar) {
+		this.conflictParamJar = conflictParamJar;
 	}
 
 	public List<String> getConflictClasses() {

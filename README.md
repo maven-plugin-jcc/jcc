@@ -2,59 +2,96 @@
 *   git clone https://github.com/maven-plugin-jcc/jcc
 *   cd jcc && mvn install
 
-如何在工程POM里加入该插件：
-``` html
+### how to use
+``` 
   <plugin>
 		<groupId>com.alibaba.maven.plugins</groupId>
 	    <artifactId>maven-jcc-plugin</artifactId>
-	    <version>0.1</version>
+	    <version>0.2</version>
 	    <executions>
-	    <execution>
+	      <execution>
 	         <id>check</id>	       
 	         <goals>
 	            <goal>check</goal>
 	         </goals>
-	      </execution>
-	      <execution>
-	         <id>check-war</id>	       
-	         <goals>
-	            <goal>check-war</goal>
-	         </goals>
-	      </execution>
+	      </execution>	      
 	    </executions>
   		</plugin>
 ```
 
-如果你的JAR是和WAR包lib目录下的包比较，那么就使用如下的命令：
-``` html
-  mvn jcc:check-war -DjarPath=D:\.m2\com\alibaba\druid\1.0.1\druid-1.0.1.jar
+###demo
+jccDemoTest is a maven project,it depend 2 jar:
 ```
-
-如果你的JAR是和非WAR包工程比较，那么就使用如下的命令：
-
-``` html
-  mvn jcc:check -DjarPath=D:\.m2\com\alibaba\druid\1.0.1\druid-1.0.1.jar
-```
-
-结果输出描述:
-
-``` html  
-  正在解析..........
-  参数中依赖的jar个数 : 1
-  工程中的jar个数 : 1
-
-   ==========start print conflict list=============
-
-   >>>> 冲突jar: com.alibaba-druid-1.0.1[P](952)  druid-1.0.1.jar(952)
-   >>>> 冲突类个数:952
-
-   ==========冲突的JAR总数：1
-   ==========end print conflict list=============  
+    <dependency>
+       <groupId>com.alibaba</groupId>
+      <artifactId>druid</artifactId>
+      <version>0.2.24</version>
+    </dependency>
+    <dependency>
+       <groupId>com.alibaba.crm</groupId>
+      <artifactId>jccDemoTest2</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
 
 ```
 
-* [P] : 由参数输入引入的JAR 
-* (952) : JAR中包含类的总个数
+jccDemoTest2 is alst a maven project,it depend 2 jar:
+```
+<dependency>
+       <groupId>com.alibaba</groupId>
+      <artifactId>druid</artifactId>
+      <version>1.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-dbcp</groupId>
+      <artifactId>commons-dbcp</artifactId>
+      <version>1.4</version>
+    </dependency>
+```
+
+now I want to add the *tddl-client* to the pom of *jccDemoTest*,but I don't know what the *tddl-client* dependency tree will do any harm to the *jccDemoTest*.
+
+so i can use jcc maven plugin to check is there any conflict:
+
+```
+mvn jcc:check -DjarPath=D:\.m2\com\taobao\tddl\tddl-client\3.3.1.0\tddl-client-3.3.1.0.jar
+
+```
+
+console will print:
+```
+resolve begin..........
+jar count of the -Djarpath method: 52
+jar count of project : 5
+
+==========start print conflict list=============
+
+>>>> conflict jar:  commons-dbcp-commons-dbcp-1.2.2[P](51)  commons-dbcp-commons-dbcp-1.4(62) conflict class count:44
+>>>> conflict detail： commons-dbcp-commons-dbcp-1.4(different-error) 
+
+
+>>>> conflict jar:  com.alibaba-druid-1.0.2[P](968)  com.alibaba-druid-0.2.24(930) conflict class count:911
+>>>> conflict detail： com.alibaba-druid-0.2.24(different-error) 
+
+
+>>>> conflict jar:  commons-pool-commons-pool-1.3[P](39)  commons-pool-commons-pool-1.5.4(52) conflict class count:39
+>>>> conflict detail： commons-pool-commons-pool-1.5.4(same-error) 
+
+
+>>>> conflict jar:  junit-junit-4.4[P](154)  junit-junit-3.8.1(100) conflict class count:23
+>>>> conflict detail： junit-junit-3.8.1(different-error) 
+
+==========conflict jar count：4
+==========end print conflict list=============
+```
+
+* [P] : the jar of -DjarPath method 
+* (952) : the class count of jar
+* (different-error)
+* (same-error) 
+* (warn)
+* (md5-error)
+
 
 
 ## License

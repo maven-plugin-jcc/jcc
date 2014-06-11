@@ -295,4 +295,5 @@ public class WarLibArtifact implements Artifact {
 		return false;
 	}
 
+
 }

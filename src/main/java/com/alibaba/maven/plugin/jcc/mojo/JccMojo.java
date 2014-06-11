@@ -13,13 +13,13 @@ import org.apache.maven.lifecycle.internal.LifecycleDependencyResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.DependencyResolutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingResult;
-
-import com.alibaba.maven.plugin.jcc.component.ConflictChecker;
+import com.alibaba.maven.plugin.jcc.component.checker.ConflictChecker;
 
 /**
  * @author owenludong.lud
@@ -55,12 +55,16 @@ public abstract class JccMojo extends AbstractMojo {
 	/**
 	 * @component role="org.apache.maven.lifecycle.internal.LifecycleDependencyResolver" roleHint="default"
 	 */
-	private LifecycleDependencyResolver lifeCycleDependencyResolver;
+	private LifecycleDependencyResolver lifeCycleDependencyResolver;		
 	
 	/**
 	 * @component role="org.apache.maven.project.ProjectBuilder" roleHint="default"
 	 */
 	private ProjectBuilder projectBuilder;
+	
+	private Set<Artifact> projectArtifacts;
+	
+	private Set<Artifact> checkArtifacts ;
 	
 
 
@@ -88,14 +92,16 @@ public abstract class JccMojo extends AbstractMojo {
 		MavenProject mavenProject = result.getProject();
 		
 		
-		Set<Artifact> artifacts = null;
+	
 		try {
-			artifacts = getDependencyJarByJarPath(mavenProject);
+			checkArtifacts = getDependencyJarByJarPath(mavenProject);
 		} catch (LifecycleExecutionException e) {
 			throw new MojoExecutionException(e.getMessage());
-		}			
+		} catch(Exception e){
+			throw new MojoExecutionException(e.getMessage());	
+		}
 		
-		if(artifacts == null){
+		if(checkArtifacts == null){
 			getLog().info("can not find artifact jar");
 			return;
 		}		
@@ -103,28 +109,39 @@ public abstract class JccMojo extends AbstractMojo {
 		//添加自己
 		Artifact artifact = mavenProject.getArtifact();
 		artifact.setFile(new File(jarPath));
-		artifacts.add(artifact);		
+		checkArtifacts.add(artifact);		
 		
-		Set<Artifact> projectArtifacts = queryComparedArtifacts();
+		projectArtifacts = queryComparedArtifacts();
 		
-		ConflictChecker conflictChecker  = new ConflictChecker();
+		ConflictChecker conflictChecker  = new ConflictChecker(this);
 		try {
-			conflictChecker.compare(artifacts, projectArtifacts);
+			conflictChecker.start();
 		} catch (Exception e) {
 			throw new MojoExecutionException(e.getMessage());
 		}
 		
 		getLog().info("finish jcc conflict check");
-
 	}
 	
 	
 	public abstract Set<Artifact>  queryComparedArtifacts() throws MojoExecutionException;
 	
 	
-	private Set<Artifact>  getDependencyJarByJarPath(MavenProject mavenProject) throws LifecycleExecutionException{
+	private Set<Artifact>  getDependencyJarByJarPath(MavenProject mavenProject) throws LifecycleExecutionException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, DependencyResolutionException{
 		Collection<String> scopesToResolve = new TreeSet<String>();
-		Collections.addAll( scopesToResolve, "system", "compile", "provided", "runtime", "test" );			
+		Collections.addAll( scopesToResolve, "system", "compile", "runtime" );	 //"这里去掉test、	provided	
+		
+		/*EventSpyDispatcher eventSpyDispatcher = new EventSpyDispatcher();
+		
+		List<EventSpy> eventSpies = new ArrayList<EventSpy>();
+		JccEventSpy eventSpy = new JccEventSpy();
+		eventSpies.add(eventSpy);
+		
+		eventSpyDispatcher.setEventSpies(eventSpies);
+		
+		Field dispatchField = lifeCycleDependencyResolver.getClass().getDeclaredField("eventSpyDispatcher");
+		dispatchField.setAccessible(true);
+		dispatchField.set(lifeCycleDependencyResolver,eventSpyDispatcher);*/
 		
 		lifeCycleDependencyResolver.resolveProjectDependencies( mavenProject, Collections.<String> emptySet() , scopesToResolve, session,
 		         false, Collections.<Artifact> emptySet() );		
@@ -133,5 +150,27 @@ public abstract class JccMojo extends AbstractMojo {
 		mavenProject.setArtifactFilter(filter);
 		Set<Artifact> artifacts =  mavenProject.getArtifacts();	
 		return artifacts;
+		
 	}
+
+
+	public Set<Artifact> getProjectArtifacts() {
+		return projectArtifacts;
+	}
+
+
+	public void setProjectArtifacts(Set<Artifact> projectArtifacts) {
+		this.projectArtifacts = projectArtifacts;
+	}
+
+
+	public Set<Artifact> getCheckArtifacts() {
+		return checkArtifacts;
+	}
+
+
+	public void setCheckArtifacts(Set<Artifact> checkArtifacts) {
+		this.checkArtifacts = checkArtifacts;
+	}
+		
 }

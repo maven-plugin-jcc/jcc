@@ -21,6 +21,8 @@ public class Jar {
 	
 	private String source; //来源  是工程WAR包的JAR还是参数输入的JAR 
 	
+	private String md5;
+	
 
 	@Override
 	public boolean equals(Object jar) {
@@ -92,6 +94,14 @@ public class Jar {
 
 	public void setVersion(String version) {
 		this.version = version;
-	}	
+	}
+
+	public String getMd5() {
+		return md5;
+	}
+
+	public void setMd5(String md5) {
+		this.md5 = md5;
+	}		
 		
 }
