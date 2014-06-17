@@ -8,19 +8,37 @@ public class ConflictResult {
 	
 	private String desc;
 	
-	private List<Jar> conflictProjectJars;  //工程中的jar
+	private List<JccArtifact> conflictProjectJars;  //工程中的jar
 	
-	private Jar conflictParamJar; //需要被检测的jar 
+	private JccArtifact conflictParamJar; //需要被检测的jar 
 	
 	private List<String> conflictClasses;
 	
 	
+	/**
+	 * 这里主要判断jar在maven里依赖的深度
+	 * @return
+	 */
+	public boolean willbeHappen(JccArtifact projectJar){
+		if(conflictParamJar == null || projectJar == null ){
+			return false;
+		}
+		
+		if(projectJar.getGroupId().equals(conflictParamJar.getGroupId()) &&
+		   projectJar.getArtifactId().equals(conflictParamJar.getArtifactId())	&&
+		   conflictParamJar.getDepth() > projectJar.getDepth()){
+			return false;
+		}
+		return true;
+	}
+	
+	
 	public ConflictResult(){
-		conflictProjectJars = new ArrayList<Jar>();	
+		conflictProjectJars = new ArrayList<JccArtifact>();	
 		conflictClasses = new ArrayList<String>();
 	}
 	
-	public void addConflictProjectJar(Jar jar){
+	public void addConflictProjectJar(JccArtifact jar){
 		if(conflictProjectJars.contains(jar)){
 			return;
 		}
@@ -28,12 +46,12 @@ public class ConflictResult {
 	}
 	
 	
-	public void addConflictProjectJars(List<Jar> jars){
+	public void addConflictProjectJars(List<JccArtifact> jars){
 		if(jars == null || jars.size() == 0){
 			return;
 		}
 		
-		for(Jar jar : jars){
+		for(JccArtifact jar : jars){
 			addConflictProjectJar(jar);
 		}
 	}
@@ -51,19 +69,19 @@ public class ConflictResult {
 	}	   
 	
 
-	public List<Jar> getConflictProjectJars() {
+	public List<JccArtifact> getConflictProjectJars() {
 		return conflictProjectJars;
 	}
 
-	public void setConflictProjectJars(List<Jar> conflictProjectJars) {
+	public void setConflictProjectJars(List<JccArtifact> conflictProjectJars) {
 		this.conflictProjectJars = conflictProjectJars;
 	}
 
-	public Jar getConflictParamJar() {
+	public JccArtifact getConflictParamJar() {
 		return conflictParamJar;
 	}
 
-	public void setConflictParamJar(Jar conflictParamJar) {
+	public void setConflictParamJar(JccArtifact conflictParamJar) {
 		this.conflictParamJar = conflictParamJar;
 	}
 

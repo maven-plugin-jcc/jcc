@@ -1,6 +1,6 @@
 /**
  *  for example: mvn jcc:check-war -DjarPath=D:\.m2\com\alibaba\druid\1.0.1\druid-1.0.1.jar
- */
+ *//*
 package com.alibaba.maven.plugin.jcc.mojo;
 
 import java.io.File;
@@ -12,11 +12,11 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import com.alibaba.maven.plugin.jcc.pojo.WarLibArtifact;
 
-/**
+*//**
  * @goal check-war
  * @requiresDirectInvocation true
  * @author owenludong.lud
- */
+ *//*
 public class JccWarMojo extends JccMojo {
 
 	@Override
@@ -67,3 +67,4 @@ public class JccWarMojo extends JccMojo {
 	}
 
 }
+*/

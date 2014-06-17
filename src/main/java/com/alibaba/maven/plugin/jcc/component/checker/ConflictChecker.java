@@ -4,54 +4,71 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.maven.artifact.Artifact;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
-
 import com.alibaba.maven.plugin.jcc.component.LifeCycle;
 import com.alibaba.maven.plugin.jcc.component.printer.ConflictPrinter;
-import com.alibaba.maven.plugin.jcc.mojo.JccMojo;
 import com.alibaba.maven.plugin.jcc.pojo.ConflictResult;
-import com.alibaba.maven.plugin.jcc.pojo.Jar;
+import com.alibaba.maven.plugin.jcc.pojo.JccArtifact;
+import com.alibaba.maven.plugin.jcc.rule.ConflictRule;
 import com.alibaba.maven.plugin.jcc.util.ArtifactUtil;
 
 public class ConflictChecker extends AbstractLogEnabled implements LifeCycle {
 	
-	private JccMojo jccMojo;
+	private ConflictRule conflictRule;
 	private List<ConflictResult> conflictResults;
 	private LifeCycle conflictPrinter;
 	
-	public ConflictChecker(JccMojo jccMojo){
-		this.jccMojo = jccMojo;
+	public ConflictChecker(ConflictRule conflictRule){
+		this.conflictRule = conflictRule;
 		conflictPrinter = new ConflictPrinter(this);
 	}			
 	
 	@Override
 	public void start() throws Exception {
 		
-		check(jccMojo.getCheckArtifacts(),jccMojo.getProjectArtifacts());	
+		check(conflictRule.getCheckArtifacts(),conflictRule.getProjectArtifacts());	
 		conflictPrinter.start();		
 	}
 
 
-	public void check(Set<Artifact> jarDependencyTree,Set<Artifact> projectDependencyTree) throws Exception {
+	public void check(Set<JccArtifact> jarDependencyTree,Set<JccArtifact> projectDependencyTree) throws Exception {
 
 		analysis(jarDependencyTree, projectDependencyTree);
 
-		List<Jar> jarDependencyClass =  ArtifactUtil.getAllClassByArtifactsAsList(jarDependencyTree,"param");		
-		Map<String,List<Jar>> projectDependencyClass = ArtifactUtil.getAllClassByArtifactsAsMap(projectDependencyTree);
+		List<JccArtifact> jarDependencyClass =  ArtifactUtil.getAllClassByArtifactsAsList(jarDependencyTree,"param");		
+		Map<String,List<JccArtifact>> projectDependencyClass = ArtifactUtil.getAllClassByArtifactsAsMap(projectDependencyTree);
 		
 		conflictResults =  transformConflictResult(jarDependencyClass,projectDependencyClass);			
 	}
 
-	public void analysis(Set<Artifact> jarDependencyTree,
-			Set<Artifact> projectDependencyTree) {
-		System.out.println("resolve begin..........");
-		System.out.println("jar count of the -Djarpath method: " + jarDependencyTree.size());
-		System.out.println("jar count of project : " + projectDependencyTree.size());
+	public void analysis(Set<JccArtifact> jarDependencyTree, Set<JccArtifact> projectDependencyTree) {
+		System.out.println();
+		System.out.println();
+		System.out.print("\t**************************************************************************************************" + "\n" );
+		System.out.print(( "\t**                                                                                              **" + "\n" ));
+		System.out.print("\t**\t                           JCC MAVEN PLUGIN                                                 **" + "\n" );
+		System.out.print("\t**\t                                                                                            **" + "\n" );
+		System.out.print("\t**\t"+ mavenProject2Str(conflictRule.getCheckProject()) +" has ¡¾"+jarDependencyTree.size()+"¡¿  dependency jar                **"  + "\n" );
+		System.out.print("\t**\t"+ mavenProject2Str(conflictRule.getProject())      +" has ¡¾"+projectDependencyTree.size()+"¡¿     dependency jar       **"  + "\n" );		
 	}
 	
-	public  List<ConflictResult> transformConflictResult(List<Jar> jarDependencyClass,Map<String,List<Jar>> projectDependencyClass){
+	private String mavenProject2Str(MavenProject mavenProject){
+		if(mavenProject == null){
+			return null;
+		}
+		
+		StringBuilder sb = new StringBuilder( 128 );
+        sb.append( "MavenProject: " );
+        sb.append( mavenProject.getGroupId() );
+        sb.append( ":" );
+        sb.append( mavenProject.getArtifactId() );
+        sb.append( ":" );
+        sb.append( mavenProject.getVersion());
+        return sb.toString();
+	}
+	
+	public  List<ConflictResult> transformConflictResult(List<JccArtifact> jarDependencyClass,Map<String,List<JccArtifact>> projectDependencyClass){
 		if((jarDependencyClass == null || jarDependencyClass.size() == 0) || 
 				(projectDependencyClass == null || projectDependencyClass.isEmpty())){
 			System.out.println("no jar need to be check conflict");
@@ -60,7 +77,7 @@ public class ConflictChecker extends AbstractLogEnabled implements LifeCycle {
 		
 	    List<ConflictResult>  conflictResults = new ArrayList<ConflictResult>();
 		
-		for(Jar jar : jarDependencyClass){		
+		for(JccArtifact jar : jarDependencyClass){		
 			List<String> classes = jar.getClasses();
 			if(classes == null || classes.size() == 0){	
 				System.out.println("jar ["+jar.getName()+"] has no class");
@@ -73,7 +90,7 @@ public class ConflictChecker extends AbstractLogEnabled implements LifeCycle {
 					continue;
 				}		
 				conflictResult.addConflictClass(clazz);
-				List<Jar> jars = projectDependencyClass.get(clazz);				
+				List<JccArtifact> jars = projectDependencyClass.get(clazz);				
 				conflictResult.addConflictProjectJars(jars);			
 			}
 			if(conflictResult.getConflictProjectJars() != null && conflictResult.getConflictProjectJars().size() > 0){
@@ -96,14 +113,7 @@ public class ConflictChecker extends AbstractLogEnabled implements LifeCycle {
 		
 	}
 
-	public JccMojo getJccMojo() {
-		return jccMojo;
-	}
-
-
-	public void setJccMojo(JccMojo jccMojo) {
-		this.jccMojo = jccMojo;
-	}
+	
 
 
 	public List<ConflictResult> getConflictResults() {

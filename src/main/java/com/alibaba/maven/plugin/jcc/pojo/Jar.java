@@ -23,6 +23,16 @@ public class Jar {
 	
 	private String md5;
 	
+	private int depth;
+	
+	
+	
+
+	@Override
+	public String toString() {
+		//return "groupId ["+ groupId +"] artifactId ["+ artifactId +"] name ["+name +"] version ["+ version +"]" ;
+		return name;
+	}
 
 	@Override
 	public boolean equals(Object jar) {
@@ -102,6 +112,13 @@ public class Jar {
 
 	public void setMd5(String md5) {
 		this.md5 = md5;
-	}		
-		
+	}
+
+	public int getDepth() {
+		return depth;
+	}
+
+	public void setDepth(int depth) {
+		this.depth = depth;
+	}			
 }
