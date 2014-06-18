@@ -42,7 +42,7 @@ The example shown below will teach you how to check conflicts in your java proje
 
 2.Build and Install your project like below
 
-    mvn install -Dg=com.taobao.tddl -Da=tddl-client -Dv=3.3.1.0 -Dmaven.test.skip=true
+    mvn validate -Dg=com.taobao.tddl -Da=tddl-client -Dv=3.3.1.0 -Dmaven.test.skip=true
 
 3.That's it.you will see the result on the console like below
 
@@ -51,7 +51,7 @@ The example shown below will teach you how to check conflicts in your java proje
 
 
 ###Note
--  support maven2 and maven3
+-  **only support maven3**
 - 【p】: the jar of be checked conflict or it's dependency jar (被检查冲突的jar或者是他的依赖的jar)
 - 【different conflict class in 2 jars】: （冲突的类个数不等于其中任何一个JAR的类个数）
 - 【same conflict class in one jar 】:（冲突的类个数等于其中一个JAR的类个数，这种一般是高低版本，可以排除低版本）
