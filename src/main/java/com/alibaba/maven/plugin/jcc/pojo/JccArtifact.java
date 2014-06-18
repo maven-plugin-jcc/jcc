@@ -17,6 +17,8 @@ public class JccArtifact {
 	private String source; // 来源 是工程WAR包的JAR还是参数输入的JAR
 	private int classSize;
 	private String md5;
+	private int managedBits; //参考DependencyNode
+
 
 	public int getDepth() {
 		return depth;
@@ -112,6 +114,14 @@ public class JccArtifact {
 
 	public void setMd5(String md5) {
 		this.md5 = md5;
+	}
+
+	public int getManagedBits() {
+		return managedBits;
+	}
+
+	public void setManagedBits(int managedBits) {
+		this.managedBits = managedBits;
 	}
 
 	@Override

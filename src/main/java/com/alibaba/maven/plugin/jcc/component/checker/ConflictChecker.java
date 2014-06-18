@@ -1,9 +1,9 @@
 package com.alibaba.maven.plugin.jcc.component.checker;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import com.alibaba.maven.plugin.jcc.component.LifeCycle;
@@ -27,12 +27,14 @@ public class ConflictChecker extends AbstractLogEnabled implements LifeCycle {
 	@Override
 	public void start() throws Exception {
 		
-		check(conflictRule.getCheckArtifacts(),conflictRule.getProjectArtifacts());	
+		
+		
+		check(conflictRule.getCheckArtifactsMap().values(),conflictRule.getProjectArtifactsMap().values());	
 		conflictPrinter.start();		
 	}
 
 
-	public void check(Set<JccArtifact> jarDependencyTree,Set<JccArtifact> projectDependencyTree) throws Exception {
+	public void check(Collection<JccArtifact> jarDependencyTree,Collection<JccArtifact> projectDependencyTree) throws Exception {
 
 		analysis(jarDependencyTree, projectDependencyTree);
 
@@ -42,7 +44,7 @@ public class ConflictChecker extends AbstractLogEnabled implements LifeCycle {
 		conflictResults =  transformConflictResult(jarDependencyClass,projectDependencyClass);			
 	}
 
-	public void analysis(Set<JccArtifact> jarDependencyTree, Set<JccArtifact> projectDependencyTree) {
+	public void analysis(Collection<JccArtifact> jarDependencyTree, Collection<JccArtifact> projectDependencyTree) {
 		System.out.println();
 		System.out.println();
 		System.out.print("\t**************************************************************************************************" + "\n" );

@@ -5,15 +5,17 @@ import java.io.FileInputStream;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
+
 import com.alibaba.maven.plugin.jcc.pojo.JccArtifact;
 
 public class ArtifactUtil {
@@ -43,8 +45,7 @@ public class ArtifactUtil {
 		return conflictClasses;
 	}
 
-	public static List<JccArtifact> getAllClassByArtifactsAsList(
-			Set<JccArtifact> artifacts, String source) throws Exception {
+	public static List<JccArtifact> getAllClassByArtifactsAsList(Collection<JccArtifact> artifacts, String source) throws Exception {
 		if (artifacts == null || artifacts.size() == 0) {
 			return null;
 		}
@@ -70,7 +71,7 @@ public class ArtifactUtil {
 		return list;
 	}
 
-	public static Map<String,List<JccArtifact>> getAllClassByArtifactsAsMap(Set<JccArtifact> artifacts) throws Exception{
+	public static Map<String,List<JccArtifact>> getAllClassByArtifactsAsMap(Collection<JccArtifact> artifacts) throws Exception{
 		if(artifacts == null || artifacts.size() == 0){
 			return null;
 		}		

@@ -27,7 +27,7 @@ public class ConflictPrinter implements LifeCycle {
 		System.out.print("\t**                                                                                              **"+"\r\n");
 		if(conflictChecker.getConflictResults() == null || conflictChecker.getConflictResults().size() == 0){
 			System.out.println("");
-			System.out.println("no conflict");
+			System.out.println("\t\t no conflict");
 			System.out.println("");
 			return;
 		}
