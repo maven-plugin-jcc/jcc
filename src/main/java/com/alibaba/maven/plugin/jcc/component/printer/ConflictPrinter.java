@@ -67,7 +67,7 @@ public class ConflictPrinter implements LifeCycle {
 			if(!hasPrinterParamJar){
 				System.out.print("\t\t\t@");				
 				//打印冲突了多少类
-				System.out.println(" conflict class size:【" +  conflictResult.getConflictClasses().size() +"】");
+				System.out.println(" conflict class size:\t" +  conflictResult.getConflictClasses().size() +"");
 				System.out.println();
 				printDependencyTree(conflictResult,conflictResult.getConflictParamJar(),4,true,true);
 				hasPrinterParamJar = true;
@@ -101,25 +101,25 @@ public class ConflictPrinter implements LifeCycle {
 		if(isSelf){
 			str.append(" "+jccArtifact.getName() );
 			if(isParam){
-				str.append("[P]("+jccArtifact.getClassSize()+") ");				
+				str.append("【P】("+jccArtifact.getClassSize()+") ");				
 			}else{
 				str.append("("+jccArtifact.getClassSize()+") ");
 				if(conflictResult.getConflictClasses().size() == jccArtifact.getClassSize() &&
 						conflictResult.getConflictClasses().size() ==	conflictResult.getConflictParamJar().getClassSize()){
 					// 所有类都冲突
 					if(jccArtifact.getMd5().equals(conflictResult.getConflictParamJar().getMd5())){
-						str.append("======>>>warn");
+						str.append("======【warn】");
 					}else{
-						str.append("======>>>md5-error ");
+						str.append("======【md5-error】 ");
 					}
 				}else if(conflictResult.getConflictClasses().size() != jccArtifact.getClassSize() &&
 						conflictResult.getConflictClasses().size() !=	conflictResult.getConflictParamJar().getClassSize()){
-					str.append("======>>>different conflict class in 2 jars");
+					str.append("======【different conflict classes in 2 jars】");
 				}else if(conflictResult.getConflictClasses().size() == jccArtifact.getClassSize() ||
 						conflictResult.getConflictClasses().size() ==	conflictResult.getConflictParamJar().getClassSize()){
-					str.append("======>>>same conflict class in one jar");
+					str.append("======【same conflict classes in 1 jar】");
 				}else{
-					str.append("======>>>unkown");
+					str.append("======【unkown】");
 				}
 			}			
 		}else{

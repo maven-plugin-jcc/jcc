@@ -49,8 +49,8 @@ public class ConflictChecker extends AbstractLogEnabled implements LifeCycle {
 		System.out.print(( "\t**                                                                                              **" + "\n" ));
 		System.out.print("\t**\t                           JCC MAVEN PLUGIN                                                 **" + "\n" );
 		System.out.print("\t**\t                                                                                            **" + "\n" );
-		System.out.print("\t**\t"+ mavenProject2Str(conflictRule.getCheckProject()) +" has ¡¾"+jarDependencyTree.size()+"¡¿  dependency jar                **"  + "\n" );
-		System.out.print("\t**\t"+ mavenProject2Str(conflictRule.getProject())      +" has ¡¾"+projectDependencyTree.size()+"¡¿     dependency jar       **"  + "\n" );		
+		System.out.print("\t\t"+ mavenProject2Str(conflictRule.getCheckProject()) +"¡¾P¡¿ has ["+jarDependencyTree.size()+"]  dependency jar                  "  + "\n" );
+		System.out.print("\t\t"+ mavenProject2Str(conflictRule.getProject())      +" has ["+projectDependencyTree.size()+"]  dependency jar            "  + "\n" );		
 	}
 	
 	private String mavenProject2Str(MavenProject mavenProject){
