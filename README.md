@@ -9,44 +9,10 @@ The example shown below will teach you how to check conflicts in your java proje
 
 ### how to use
 
-1.First copy the plugin config below to your pom file
+1.[check conflict with 2 mavenProject](https://github.com/maven-plugin-jcc/jcc/wiki/check-2-mavenProject-conflict-jar)
 
-    <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <version>1.3</version>
-        <dependencies>
-            <dependency>
-                <groupId>com.alibaba.maven.plugins</groupId>
-                <artifactId>maven-jcc-plugin</artifactId>
-                <version>1.0-SNAPSHOT</version>
-            </dependency>
-        </dependencies>
-        <executions>
-            <execution>
-                <id>jcc</id>                        
-                <configuration>
-                    <rules>                             
-                        <conflictRule implementation="com.alibaba.maven.plugin.jcc.rule.ConflictRule">                   
-                            
-                        </conflictRule>
-                    </rules>
-                </configuration>
-                <goals>
-                    <goal>enforce</goal>
-                </goals>
-            </execution>
-        </executions>
-    </plugin>
+2.[check conflict with a mavenProject and a folder]()
 
-
-2.Build and Install your project like below
-
-    mvn validate -Dg=com.taobao.tddl -Da=tddl-client -Dv=3.3.1.0 -Dmaven.test.skip=true
-
-3.That's it.you will see the result on the console like below
-
-![jcc.jpg](http://www.getsetter.cn/img/jcc.jpg)
 
 
 
