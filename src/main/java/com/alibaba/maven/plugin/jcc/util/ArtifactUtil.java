@@ -10,11 +10,14 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.project.MavenProject;
 
 import com.alibaba.maven.plugin.jcc.pojo.JccArtifact;
 
@@ -80,12 +83,15 @@ public class ArtifactUtil {
 		for(JccArtifact artifact : artifacts){
 			List<String> classes = ArtifactUtil.getClassFileName(artifact);			
 			artifact.setClassSize(classes.size());
-				
-			if(StringUtils.isBlank(artifact.getGroupId())){
-				artifact.setName(artifact.getArtifactId());
-            }else{
-            	artifact.setName(artifact.getGroupId()+"-"+artifact.getArtifactId()+"-"+artifact.getVersion());            	
-            }	
+			
+			if(StringUtils.isBlank(artifact.getName())){
+				if(StringUtils.isBlank(artifact.getGroupId())){
+					artifact.setName(artifact.getArtifactId());
+	            }else{
+	            	artifact.setName(artifact.getGroupId()+"-"+artifact.getArtifactId()+"-"+artifact.getVersion());            	
+	            }	
+			}				
+			
 			artifact.setMd5(DigestUtils.md5Hex(new FileInputStream(artifact.getFile())));
 			
 			
@@ -103,5 +109,49 @@ public class ArtifactUtil {
 		}		
 		return map;		
 		
+	}
+	
+	public static JccArtifact toJccArtifact(Artifact artifact){
+		if(artifact == null){
+			return null;
+		}
+		JccArtifact jccArtifact = new JccArtifact();
+		jccArtifact.setFile(artifact.getFile());
+		jccArtifact.setGroupId(artifact.getGroupId());
+		jccArtifact.setArtifactId(artifact.getArtifactId());
+		jccArtifact.setVersion(artifact.getVersion());
+		jccArtifact.setScope(jccArtifact.getScope());
+		
+		return jccArtifact;
+	}
+	
+	public static List<JccArtifact> toJccArtifacts(Set<Artifact> artifacts) throws Exception{
+		if(artifacts == null || artifacts.size() == 0){
+			return null;
+		}
+		
+		List<JccArtifact> jccArtifacts = new ArrayList<JccArtifact>();
+		
+		for(Artifact artifact : artifacts){
+			jccArtifacts.add(toJccArtifact(artifact));
+		}
+		
+		return 	jccArtifacts;
+		
+	}
+	
+	public static String mavenProject2Str(MavenProject mavenProject){
+		if(mavenProject == null){
+			return null;
+		}
+		
+		StringBuilder sb = new StringBuilder( 128 );
+        sb.append( "MavenProject: " );
+        sb.append( mavenProject.getGroupId() );
+        sb.append( ":" );
+        sb.append( mavenProject.getArtifactId() );
+        sb.append( ":" );
+        sb.append( mavenProject.getVersion());
+        return sb.toString();
 	}
 }

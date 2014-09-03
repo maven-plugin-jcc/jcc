@@ -6,15 +6,16 @@ import com.alibaba.maven.plugin.jcc.component.checker.AbstractChecker;
 import com.alibaba.maven.plugin.jcc.pojo.ConflictResult;
 import com.alibaba.maven.plugin.jcc.pojo.JccArtifact;
 
-public class ConflictPrinter extends AbstractPrinter  {		
-	
+public class CompareIsIncludePrinter extends AbstractPrinter {
 
-	public ConflictPrinter(AbstractChecker checker) {
+	public CompareIsIncludePrinter(AbstractChecker checker) {
 		super(checker);		
 	}
 
+
 	@Override
 	public void printer() {
+	
 		System.out.print("\t**                                                                                              **"+"\r\n");
 		if(checker.getConflictResults() == null || checker.getConflictResults().size() == 0){
 			System.out.println("");
@@ -24,21 +25,22 @@ public class ConflictPrinter extends AbstractPrinter  {
 		}
 		//System.out.print("\t**  conflict jar count : 【"+ conflictChecker.getConflictResults().size() +"】                                                                  **"  + "\n" );
 		//System.out.print("\t**                                                                                              **"+"\r\n");
-		System.out.print("\t**  conflict detail:                                                                            **"+ "\n");	
+		System.out.print("\t**  difference detail:                                                                            **"+ "\n");	
+	
 		for(Object o : checker.getConflictResults()){
 			System.out.println();
 			ConflictResult conflictResult = (ConflictResult)o;
-			if(conflictResult.getConflictProjectJars().size() == 0 || conflictResult.getConflictClasses().size() == 0){
+			/*if(conflictResult.getConflictProjectJars().size() == 0 || conflictResult.getConflictClasses().size() == 0){
 				continue;
-			}		
+			}	*/	
 			
 			//打印冲突的jar信息
 			printDependencyTree(conflictResult);			
 		}				
 		System.out.print("\t**                                                                                              **"+"\r\n");
 		System.out.print("\t**                                                                                              **"+"\r\n");
-		
-	}		
+	}
+	
 	
 	private void printDependencyTree(ConflictResult conflictResult){
 		if(conflictResult == null){
@@ -46,27 +48,31 @@ public class ConflictPrinter extends AbstractPrinter  {
 		}
 		
 		List<JccArtifact> conflictProjectJars =  conflictResult.getConflictProjectJars();
-		if(conflictProjectJars == null || conflictProjectJars.size() == 0){
-			return;
-		}
-		
-		boolean hasPrinterParamJar = false;
-		for(JccArtifact  jccArtifact : conflictProjectJars){
-			if(!conflictResult.willbeHappen(jccArtifact)){
-				//System.out.println("jar ["+ jar.toString() +"] will not conflict with  ["+conflictResult.getConflictParamJar().toString()+"]");
-				continue;
-			}			
-			if(!hasPrinterParamJar){
-				System.out.print("\t\t\t@");				
-				//打印冲突了多少类
-				System.out.println(" conflict class size:\t" +  conflictResult.getConflictClasses().size() +"");
-				System.out.println();
-				printDependencyTree(conflictResult,conflictResult.getConflictParamJar(),4,true,true);
-				hasPrinterParamJar = true;
-			}
+		if(conflictProjectJars == null || conflictProjectJars.size() == 0)
+		{
+			System.out.print("\t\t\t@");
+			System.out.println(" conflict class size:\t" +  0 +"");			
 			System.out.println();
-			printDependencyTree(conflictResult,jccArtifact,4,true,false);			
+			printDependencyTree(conflictResult,conflictResult.getConflictParamJar(),4,true,true);
 		}
+		else
+		{
+			boolean hasPrinterParamJar = false;
+			for(JccArtifact  jccArtifact : conflictProjectJars){
+					
+				if(!hasPrinterParamJar){
+					System.out.print("\t\t\t@");				
+					//打印冲突了多少类
+					System.out.println(" conflict class size:\t" +  conflictResult.getConflictClasses().size() +"");
+					System.out.println();
+					printDependencyTree(conflictResult,conflictResult.getConflictParamJar(),4,true,true);
+					hasPrinterParamJar = true;
+				}
+				System.out.println();
+				printDependencyTree(conflictResult,jccArtifact,4,true,false);			
+			}
+		}	
+		
 	}	
 	
 	
@@ -100,7 +106,7 @@ public class ConflictPrinter extends AbstractPrinter  {
 						conflictResult.getConflictClasses().size() ==	conflictResult.getConflictParamJar().getClassSize()){
 					// 所有类都冲突
 					if(jccArtifact.getMd5().equals(conflictResult.getConflictParamJar().getMd5())){
-						str.append("======【warn】");
+						//str.append("======【warn】"); //忽略
 					}else{
 						str.append("======【md5-error】 ");
 					}
@@ -124,6 +130,4 @@ public class ConflictPrinter extends AbstractPrinter  {
 	}
 
 
-	
-	
 }

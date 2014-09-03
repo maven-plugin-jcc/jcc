@@ -14,7 +14,7 @@ public class ConflictResult {
 	
 	private List<String> conflictClasses;
 	
-	
+		
 	/**
 	 * 这里主要判断jar在maven里依赖的深度
 	 * @return
@@ -92,5 +92,5 @@ public class ConflictResult {
 	public void setConflictClasses(List<String> conflictClasses) {
 		this.conflictClasses = conflictClasses;
 	}
-	
+
 }
