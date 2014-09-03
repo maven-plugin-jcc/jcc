@@ -1,6 +1,6 @@
 ## WIKI 
 
-[WIKI]https://github.com/maven-plugin-jcc/jcc/wiki
+[JCC](https://github.com/maven-plugin-jcc/jcc/wiki)
 
 
 ## License
